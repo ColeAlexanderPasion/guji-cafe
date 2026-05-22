@@ -1,0 +1,6 @@
+{
+  "name": "Guji Cafe",
+  "description": "An interactive, premium coffee shop website for Guji Cafe, featuring a cinematic loading experience, liquid-glass navbar elements, warm organic typography, and a live reservation engine for our branches in La Union and Ilocos Sur.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
