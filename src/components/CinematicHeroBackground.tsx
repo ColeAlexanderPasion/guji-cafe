@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { motion, useAnimation } from "motion/react";
+import { motion } from "motion/react";
+import heroImage from "../assets/images/cinematic_coffee_hero_1779435548186.png";
 
 interface CinematicBackgroundProps {
   isPlaying: boolean;
@@ -22,37 +23,49 @@ const BeautifulCoffeeBean = ({ className = "" }: { className?: string }) => (
         <stop offset="60%" stopColor="#3B2314" />
         <stop offset="100%" stopColor="#1E0F08" />
       </radialGradient>
+
       <linearGradient id="creaseGrad" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#1A0D06" />
         <stop offset="50%" stopColor="#50311F" />
         <stop offset="100%" stopColor="#1A0D06" />
       </linearGradient>
+
       <radialGradient id="goldHighlight" cx="30%" cy="30%" r="40%">
         <stop offset="0%" stopColor="#E2B77C" stopOpacity="0.45" />
         <stop offset="100%" stopColor="#3B2314" stopOpacity="0" />
       </radialGradient>
     </defs>
+
     {/* Base Bean Shadow */}
-    <ellipse cx="62" cy="65" rx="42" ry="28" fill="black" opacity="0.4" filter="blur(6px)" />
-    
+    <ellipse
+      cx="62"
+      cy="65"
+      rx="42"
+      ry="28"
+      fill="black"
+      opacity="0.4"
+      filter="blur(6px)"
+    />
+
     {/* Main Bean Body */}
     <path
       d="M25 60C25 35 45 20 70 20C90 20 100 38 100 60C100 82 85 100 60 100C35 100 25 85 25 60Z"
       fill="url(#beanGrad)"
     />
-    
+
     {/* Glossy highlight accent */}
     <path
       d="M32 50C32 38 43 28 58 25C40 32 32 45 32 60C32 63 33 66 34 68C33 65 32 62 32 50Z"
       fill="white"
       opacity="0.12"
     />
-    
-    {/* Central organic seed crease with organic wiggle */}
+
+    {/* Central organic seed crease */}
     <path
       d="M30 62C40 60 48 64 56 50C62 38 72 32 88 56C82 66 68 76 58 72C48 68 38 74 30 62Z"
       fill="none"
     />
+
     <path
       d="M26 60 Q 45 52, 60 60 T 96 60"
       stroke="url(#creaseGrad)"
@@ -60,6 +73,7 @@ const BeautifulCoffeeBean = ({ className = "" }: { className?: string }) => (
       strokeLinecap="round"
       fill="none"
     />
+
     <path
       d="M26 60 Q 45 52, 60 60 T 96 60"
       stroke="#120602"
@@ -67,6 +81,7 @@ const BeautifulCoffeeBean = ({ className = "" }: { className?: string }) => (
       strokeLinecap="round"
       fill="none"
     />
+
     <path
       d="M45 56 Q 52 50, 65 62"
       stroke="url(#goldHighlight)"
@@ -82,41 +97,47 @@ export default function CinematicHeroBackground({
   isMuted = true,
   opacity = 0.85,
 }: CinematicBackgroundProps) {
+  // Keep this so TypeScript does not complain if noUnusedParameters is enabled.
+  void isMuted;
+
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // Parallax displacement states
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [targetMousePos, setTargetMousePos] = useState({ x: 0, y: 0 });
 
-  // Floating Particles configuration
-  const [particles, setParticles] = useState<Array<{
-    id: number;
-    x: number;
-    y: number;
-    size: number;
-    speedY: number;
-    speedX: number;
-    opacity: number;
-    pulseSpeed: number;
-  }>>([]);
+  // Floating particles configuration
+  const [particles, setParticles] = useState<
+    Array<{
+      id: number;
+      x: number;
+      y: number;
+      size: number;
+      speedY: number;
+      speedX: number;
+      opacity: number;
+      pulseSpeed: number;
+    }>
+  >([]);
 
-  // Floating Beans configuration
-  const [beans, setBeans] = useState<Array<{
-    id: number;
-    x: number;
-    y: number;
-    scale: number;
-    rotateStart: number;
-    rotateDirection: number;
-    speedY: number;
-    speedX: number;
-    swayFrequency: number;
-    parallaxMultiplier: number;
-  }>>([]);
+  // Floating beans configuration
+  const [beans, setBeans] = useState<
+    Array<{
+      id: number;
+      x: number;
+      y: number;
+      scale: number;
+      rotateStart: number;
+      rotateDirection: number;
+      speedY: number;
+      speedX: number;
+      swayFrequency: number;
+      parallaxMultiplier: number;
+    }>
+  >([]);
 
   // Generate randomized elements on mount
   useEffect(() => {
-    // Generate 18 glowing amber particles
     const localSavedParticles = Array.from({ length: 18 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
@@ -127,9 +148,9 @@ export default function CinematicHeroBackground({
       opacity: Math.random() * 0.6 + 0.2,
       pulseSpeed: Math.random() * 0.02 + 0.01,
     }));
+
     setParticles(localSavedParticles);
 
-    // Generate 7 floating premium coffee beans in three dimensions
     const localSavedBeans = Array.from({ length: 7 }).map((_, i) => ({
       id: i,
       x: 10 + Math.random() * 80,
@@ -142,25 +163,28 @@ export default function CinematicHeroBackground({
       swayFrequency: Math.random() * 0.005 + 0.002,
       parallaxMultiplier: Math.random() * 1.5 + 0.5,
     }));
+
     setBeans(localSavedBeans);
   }, []);
 
-  // Soft smooth mouse position interpolation loop
+  // Smooth mouse position tracking
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      // Map to normalized spectrum [-1, 1]
+
       const nx = (e.clientX / width) * 2 - 1;
       const ny = (e.clientY / height) * 2 - 1;
+
       setTargetMousePos({ x: nx, y: ny });
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Frame tick simulation for physical drifting elements when isPlaying is active
+  // Frame tick simulation for drifting elements
   useEffect(() => {
     if (!isPlaying) return;
 
@@ -170,28 +194,26 @@ export default function CinematicHeroBackground({
     const tick = () => {
       tickCount += 1;
 
-      // Dampened mouse parallax movement
       setMousePos((prev) => {
         const dx = targetMousePos.x - prev.x;
         const dy = targetMousePos.y - prev.y;
+
         return {
-          x: prev.x + dx * 0.06, // Smooth dampening factor
+          x: prev.x + dx * 0.06,
           y: prev.y + dy * 0.06,
         };
       });
 
-      // Update amber particles
       setParticles((prevParticles) =>
         prevParticles.map((p) => {
           let updatedY = p.y + p.speedY;
           let updatedX = p.x + p.speedX;
 
-          // Wrap around borders gracefully
           if (updatedY < -10) updatedY = 110;
           if (updatedX < -10 || updatedX > 110) updatedX = Math.random() * 100;
 
-          // Dynamic brightness oscillation
-          const targetOpacity = p.opacity + Math.sin(tickCount * p.pulseSpeed) * 0.02;
+          const targetOpacity =
+            p.opacity + Math.sin(tickCount * p.pulseSpeed) * 0.02;
 
           return {
             ...p,
@@ -202,15 +224,12 @@ export default function CinematicHeroBackground({
         })
       );
 
-      // Update drift of coffee beans
       setBeans((prevBeans) =>
         prevBeans.map((b) => {
           let updatedY = b.y + b.speedY;
-          // Apply soft horizontal wavy sway using harmonic oscillation
           const sway = Math.sin(tickCount * b.swayFrequency) * 0.07;
           let updatedX = b.x + b.speedX + sway;
 
-          // Wrap borders
           if (updatedY < -15) updatedY = 115;
           if (updatedX < -15) updatedX = 115;
           if (updatedX > 115) updatedX = -15;
@@ -227,13 +246,14 @@ export default function CinematicHeroBackground({
     };
 
     frameId = requestAnimationFrame(tick);
+
     return () => cancelAnimationFrame(frameId);
   }, [isPlaying, targetMousePos]);
 
-  // Static fallback or standard camera scales
   const transformStyleCamera = {
-    // Elegant parallax offset mapping
-    transform: `translate3d(${mousePos.x * -14}px, ${mousePos.y * -14}px, 0px) scale(1.04)`,
+    transform: `translate3d(${mousePos.x * -14}px, ${
+      mousePos.y * -14
+    }px, 0px) scale(1.04)`,
     transition: "transform 0.1s ease-out",
   };
 
@@ -243,7 +263,7 @@ export default function CinematicHeroBackground({
       className="absolute inset-0 w-full h-full overflow-hidden select-none bg-espresso z-0"
       style={{ opacity }}
     >
-      {/* 1. Core Generative High-Resolution Base Image with slow looping camera push-in and liquid ripples */}
+      {/* Core high-resolution base image */}
       <motion.div
         className="absolute inset-0 w-full h-full"
         style={transformStyleCamera}
@@ -261,19 +281,16 @@ export default function CinematicHeroBackground({
         }}
       >
         <img
-          src="/src/assets/images/cinematic_coffee_hero_1779435548186.png"
+          src={heroImage}
           alt="Cinematic gourmet coffee splash backdrop"
           className="w-full h-full object-cover filter brightness-[0.72] contrast-[1.08]"
-          referrerPolicy="no-referrer"
-          
           style={{
-            // Dynamic subtle SVG displacement or heat shimmer look using inline CSS filters if supported
             filter: "brightness(0.72) contrast(1.08) url(#heatShimmerFilter)",
           }}
         />
       </motion.div>
 
-      {/* SVG Liquid Heat Filter to simulate subtle liquid crown rippling and steam shimmer */}
+      {/* SVG liquid heat filter */}
       <svg className="hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter id="heatShimmerFilter">
@@ -290,12 +307,13 @@ export default function CinematicHeroBackground({
                 repeatCount="indefinite"
               />
             </feTurbulence>
+
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" />
           </filter>
         </defs>
       </svg>
 
-      {/* 2. BACKGROUND LAYER: Warm Golden Bokeh particle circles */}
+      {/* Warm golden bokeh particle circles */}
       <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden mix-blend-screen">
         {particles.slice(0, 10).map((pt) => {
           const parallaxX = mousePos.x * -25;
@@ -319,7 +337,7 @@ export default function CinematicHeroBackground({
         })}
       </div>
 
-      {/* 3. CORE INTERACTIVE LAYER: Soft Drifting Steam Wisps Rising */}
+      {/* Soft drifting steam wisps */}
       <div className="absolute inset-0 pointer-events-none z-15 flex justify-center items-end mix-blend-screen">
         <svg
           className="w-full max-w-[650px] h-[75vh] opacity-35"
@@ -337,7 +355,6 @@ export default function CinematicHeroBackground({
             </linearGradient>
           </defs>
 
-          {/* Steam Strand 1 */}
           <motion.path
             d="M180 500 C150 420 220 300 170 200 C130 110 240 50 190 10"
             stroke="url(#steamGradient)"
@@ -362,7 +379,6 @@ export default function CinematicHeroBackground({
             }}
           />
 
-          {/* Steam Strand 2 */}
           <motion.path
             d="M 220 490 C 240 400 160 330 210 220 C 240 130 170 70 205 15"
             stroke="url(#steamGradient)"
@@ -389,14 +405,12 @@ export default function CinematicHeroBackground({
         </svg>
       </div>
 
-      {/* 4. CHRONO PARALLAX COFFEE BEANS & SPARKLES HIGHLIGHTS */}
+      {/* Parallax coffee beans and sparkles */}
       <div className="absolute inset-0 pointer-events-none z-18">
-        {/* Render animated floating coffee beans with physical spatial parallax */}
         {beans.map((bn) => {
-          // Unique rotation metrics
-          const rotateValue = bn.rotateStart + (isPlaying ? 360 : 0) * bn.rotateDirection;
-          
-          // Different elements have distinct horizontal mouse-displacements, creating authentic 3D spatial depth
+          const rotateValue =
+            bn.rotateStart + (isPlaying ? 360 : 0) * bn.rotateDirection;
+
           const parallaxX = mousePos.x * -42 * bn.parallaxMultiplier;
           const parallaxY = mousePos.y * -42 * bn.parallaxMultiplier;
 
@@ -409,7 +423,7 @@ export default function CinematicHeroBackground({
                 top: `${bn.y}%`,
                 width: `${bn.scale * 150}px`,
                 height: `${bn.scale * 150}px`,
-                zIndex: bn.scale > 0.5 ? 25 : 12, // Larger beans sit on foreground layers
+                zIndex: bn.scale > 0.5 ? 25 : 12,
                 transform: `translate3d(${parallaxX}px, ${parallaxY}px, 0px)`,
                 willChange: "transform",
               }}
@@ -439,7 +453,6 @@ export default function CinematicHeroBackground({
           );
         })}
 
-        {/* Floating Sparks Front Layer */}
         {particles.slice(10).map((pt) => {
           const parallaxX = mousePos.x * -55;
           const parallaxY = mousePos.y * -55;
